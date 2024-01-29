@@ -1,17 +1,4 @@
-variable "app_name" {
-    description = "application name"
-    default = "golang-serverless-api"
-}
 
-variable "app_env" {
-  default = "dev"
-  description = "application environment variable"
-}
-
-variable "app_runtime" {
-  default = "provided.al2"
-  description = "lambda runtime specification"
-}
 
 resource "random_id" "unique_suffix" {
   byte_length = 2
@@ -28,15 +15,27 @@ data "archive_file" "lambda_zip" {
   output_path = "build/bin/app.zip"
 }
 
-output "api_url" {
-  value = aws_api_gateway_deployment.api_deployment.invoke_url
+resource "aws_s3_object" "lambda_hello_world" {
+  bucket = aws_s3_bucket.lambda_storage_bucket.id
+  key    = "app.zip"
+  source = data.archive_file.lambda_zip.output_path
+  etag = filemd5(data.archive_file.lambda_zip.output_path)
 }
+
 
 terraform {
   required_providers {
     aws = {
         source = "hashicorp/aws"
-        version = "~> 5.0"
+        version = "5.34.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.6.0"
+    }
+    archive = {
+      source  = "hashicorp/archive"
+      version = "2.4.2"
     }
   }
 }

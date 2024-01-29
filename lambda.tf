@@ -43,8 +43,9 @@ resource "aws_iam_role_policy_attachment" "bits" {
 
 
 resource "aws_lambda_function" "bits" {
+  s3_bucket = aws_s3_bucket.lambda_storage_bucket.id
+  s3_key    = aws_s3_object.lambda_zip.key
   function_name    = local.app_id
-  filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
   handler          = "app"
   role             = aws_iam_role.bits.arn
