@@ -1,0 +1,35 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: configure
+      run: ./configure
+
+    - name: Install dependencies
+      run: make
+
+    - name: Build Go binary
+      run: make build
+
+    - name: initialize your code to download the requirements mentioned in your code
+      run: make init
+
+    - name: review changes and choose whether to simply accept them
+      run: terraform plan
+
+    - name: accept changes and apply them against real infrastructure
+      run: terraform apply --auto-approve
+
+
