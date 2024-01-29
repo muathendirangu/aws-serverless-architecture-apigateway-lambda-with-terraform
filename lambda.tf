@@ -1,4 +1,4 @@
-resource "bits_iam_lambda_role" "bits" {
+resource "aws_iam_role" "bits" {
   name = "bits-lambda-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -12,7 +12,7 @@ resource "bits_iam_lambda_role" "bits" {
   })
 }
 
-resource "bits_iam_lambda_policy" "bits" {
+resource "aws_iam_policy" "bits" {
   name        = "bits-lambda-policy"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -36,21 +36,21 @@ resource "bits_iam_lambda_policy" "bits" {
   })
 }
 
-resource "bits_iam_lambda_role_policy_attachment" "bits" {
-  policy_arn = bits_iam_lambda_policy.bits.arn
-  role = bits_iam_lambda_role.bits.name
+resource "aws_iam_role_policy_attachment" "bits" {
+  policy_arn = aws_iam_policy.bits.arn
+  role = aws_iam_role.bits.name
 }
 
 
-resource "bits_lambda_function" "bits" {
+resource "aws_lambda_function" "bits" {
   function_name    = local.app_id
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
   handler          = "app"
-  role             = bits_iam_lambda_role.bits.arn
+  role             = aws_iam_role.bits.arn
   runtime          =var.app_runtime
   vpc_config {
-    subnet_ids = [bits_subnet.bits.id]
-    security_group_ids = [bits_sg.bits.id]
+    subnet_ids = [aws_subnet.bits.id]
+    security_group_ids = [aws_security_group.bits.id]
   }
 }

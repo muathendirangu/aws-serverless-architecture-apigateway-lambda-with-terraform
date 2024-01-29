@@ -35,19 +35,19 @@ output "api_url" {
 terraform {
   required_providers {
     aws = {
-        source = "harshicop/aws"
+        source = "hashicorp/aws"
         version = "~> 5.0"
     }
   }
 }
 
 provider "aws" {
-  region = "eu-west-1a"
+  region = "eu-west-1"
   access_key = "your_access_key_here"
   secret_key = "your_secret_key_here"
 }
 
-resource "bits_vpc" "bits" {
+resource "aws_vpc" "bits" {
   cidr_block = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support = true
@@ -56,17 +56,17 @@ resource "bits_vpc" "bits" {
   }
 }
 
-resource "bits_subnet" "bits" {
+resource "aws_subnet" "bits" {
   cidr_block = "10.0.2.0/24"
-  vpc_id = bits_vpc.bits.id
+  vpc_id = aws_vpc.bits.id
   tags = {
     Name = "bits-subnet"
   }
 }
 
 
-resource "bits_sg" "bits" {
-  vpc_id = bits_vpc.bits.id
+resource "aws_security_group" "bits" {
+  vpc_id = aws_vpc.bits.id
   ingress {
     from_port = 0
     to_port = 65535
