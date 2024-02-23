@@ -1,2 +1,1 @@
-# an AWS Lambda Function template with Terraform
-an AWS Lambda Function template with Terraform
+A serverless architecture for api gateway and lambda defined using terraform
